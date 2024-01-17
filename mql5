@@ -1,0 +1,104 @@
+mql5
+//+------------------------------------------------------------------+
+//|                                               DJI Prop MT4.mq5   |
+//|                                                forexroboteasy.com |
+//|                                                Forex Robot Easy Team |
+//+------------------------------------------------------------------+
+
+//--- Input parameters
+input double RiskLevel = 0.02; // Risk level for lot size calculation
+input double MaximumDrawdownPerDay = 0.05; // Maximum drawdown per day
+input double OverallDrawdown = 0.1; // Overall drawdown
+input double MinimumProfitPerMonth = 0.1; // Minimum profit per month
+input int LeverageRatio = 100; // Leverage ratio
+input bool NewsFilterEnabled = true; // Enable news filter
+
+//--- Global variables
+double AccountEquity; // Current account equity
+double AccountBalance; // Current account balance
+double AccountProfit; // Current account profit
+double AccountLeverage; // Current account leverage
+int MarketInfoInteger; // Market info integer for news filter
+datetime NewsEventTime; // News event time
+
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+    // Get initial account information
+    AccountEquity = AccountInfoDouble(ACCOUNT_EQUITY);
+    AccountBalance = AccountInfoDouble(ACCOUNT_BALANCE);
+    AccountProfit = AccountInfoDouble(ACCOUNT_PROFIT);
+    AccountLeverage = AccountInfoInteger(ACCOUNT_LEVERAGE);
+
+    // Set news filter
+    if (NewsFilterEnabled)
+    {
+        MarketInfoInteger = MarketInfo(Symbol(), MODE_INTEGER);
+        NewsEventTime = StrToTime('2021.01.01 00:00:00');
+    }
+
+    return(INIT_SUCCEEDED);
+}
+
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+    // Check if news filter is enabled and current time is after news event time
+    if (NewsFilterEnabled && TimeCurrent() > NewsEventTime)
+    {
+        // Perform trading operations based on news filter
+        // ...
+    }
+    else
+    {
+        // Perform trading operations without news filter
+        // ...
+    }
+
+    // Check if maximum drawdown per day is exceeded
+    if (AccountBalance - AccountProfit < AccountBalance * MaximumDrawdownPerDay)
+    {
+        // Perform actions to control maximum drawdown per day
+        // ...
+    }
+
+    // Check if overall drawdown is exceeded
+    if (AccountBalance - AccountProfit < AccountBalance * OverallDrawdown)
+    {
+        // Perform actions to control overall drawdown
+        // ...
+    }
+
+    // Calculate lot size based on risk level
+    double LotSize = AccountBalance * RiskLevel / (SymbolInfoDouble(Symbol(), SYMBOL_TRADE_TICK_SIZE) * SymbolInfoDouble(Symbol(), SYMBOL_TRADE_CONTRACT_SIZE));
+
+    // Check if minimum profit per month is not met
+    if (AccountProfit < AccountBalance * MinimumProfitPerMonth / 12)
+    {
+        // Perform actions to achieve minimum profit per month
+        // ...
+    }
+
+    // Check if leverage ratio is not met
+    if (AccountLeverage < LeverageRatio)
+    {
+        // Perform actions to control leverage ratio
+        // ...
+    }
+
+    // Perform trading operations based on calculated lot size
+    // ...
+}
+
+//+------------------------------------------------------------------+
+//| Expert deinitialization function                                 |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+{
+    // Perform actions before deinitialization
+    // ...
+}
